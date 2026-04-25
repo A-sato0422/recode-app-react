@@ -1,10 +1,10 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LoginPage } from "./pages/LoginPage";
+import { HomePage } from "./pages/HomePage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { ProtectedRoute } from "./app/ProtectedRoute";
 
-// 後のステップで作るページ（仮置き）
-const HomePage = () => <div className="p-4">ホーム画面（ステップ4で実装）</div>;
+// ステップ6で実装
 const PlayerPage = () => <div className="p-4">再生画面（ステップ6で実装）</div>;
 
 export default function App() {
