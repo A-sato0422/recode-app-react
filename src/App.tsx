@@ -1,11 +1,9 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LoginPage } from "./pages/LoginPage";
 import { HomePage } from "./pages/HomePage";
+import { PlayerPage } from "./pages/PlayerPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { ProtectedRoute } from "./app/ProtectedRoute";
-
-// ステップ6で実装
-const PlayerPage = () => <div className="p-4">再生画面（ステップ6で実装）</div>;
 
 export default function App() {
   return (

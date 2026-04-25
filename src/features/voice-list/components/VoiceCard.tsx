@@ -4,7 +4,7 @@ import type { Voice } from "../../../shared/types/voice";
 // サンプルデザインに合わせたカード背景色
 const CARD_COLORS = ["#FF8FAB", "#E8445A", "#5B5BD6", "#F5A623", "#87CEEB", "#FF6347", "#9B7EC8", "#5BB974", "#FF69B4"];
 
-const DEFAULT_THUMBNAIL = "/default-thumbnail.png";
+const DEFAULT_THUMBNAIL = "/default-thumbnail.svg";
 
 type Props = {
   voice: Voice;

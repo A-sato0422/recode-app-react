@@ -13,3 +13,14 @@ export const useVoices = (userId: string) => {
     queryFn: () => fetchVoices(userId),
   });
 };
+
+// ステップ7でSupabaseのクエリに切り替える
+export const useVoiceById = (id: string) => {
+  return useQuery({
+    queryKey: ["voice", id],
+    queryFn: async () => {
+      const all = [...MOCK_SATOSHI_VOICES, ...MOCK_MINA_VOICES];
+      return all.find((v) => v.id === id) ?? null;
+    },
+  });
+};
