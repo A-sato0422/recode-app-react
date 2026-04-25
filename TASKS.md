@@ -9,7 +9,7 @@
 - [x] ステップ4: ホーム画面（VoiceCard + VoiceGrid + VoicePage）
 
 ## 📋 未着手
-- [ ] ステップ5: 横スクロール2画面（HomePage）
+- [x] ステップ5: 横スクロール2画面（HomePage）
 - [ ] ステップ6: 再生画面（PlayerPage + useAudioPlayer）
 - [ ] ステップ7: Supabase（テーブル・RLS・Storage・ユーザー作成）
 - [ ] ステップ8: 録音モーダル（useRecorder + RecorderModal + Storageアップロード）
