@@ -2,7 +2,13 @@ import { useState } from "react";
 import { useSwipeable } from "react-swipeable";
 import { useAuth } from "../features/auth/hooks/useAuth";
 import { VoicePage } from "../features/voice-list/components/VoicePage";
-import { SATOSHI_USER_ID, MINA_USER_ID } from "../shared/lib/mockData";
+
+const SATOSHI_USER_ID = import.meta.env.VITE_SATOSHI_USER_ID as string;
+const MINA_USER_ID = import.meta.env.VITE_MINA_USER_ID as string;
+
+if (!SATOSHI_USER_ID || !MINA_USER_ID) {
+  throw new Error("環境変数 VITE_SATOSHI_USER_ID / VITE_MINA_USER_IDが未設定です");
+}
 
 export const HomePage = () => {
   const { user } = useAuth();

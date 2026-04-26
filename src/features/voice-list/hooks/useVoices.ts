@@ -1,26 +1,49 @@
 import { useQuery } from "@tanstack/react-query";
-import { MOCK_SATOSHI_VOICES, MOCK_MINA_VOICES, SATOSHI_USER_ID } from "../../../shared/lib/mockData";
+import { supabase, getAudioUrl, getThumbnailUrl } from "../../../shared/lib/supabase";
+import type { Voice } from "../../../shared/types/voice";
 
-// ステップ7でSupabaseのクエリに切り替える
-const fetchVoices = async (userId: string) => {
-  if (userId === SATOSHI_USER_ID) return MOCK_SATOSHI_VOICES;
-  return MOCK_MINA_VOICES;
+const fetchVoices = async (userId: string): Promise<Voice[]> => {
+  const { data, error } = await supabase.from("voices").select("*").eq("user_id", userId).eq("is_deleted", false).order("created_at", { ascending: false });
+
+  if (error) throw error;
+  if (!data) return [];
+
+  // 音声とサムネイルデータをマッピングして返す
+  return data.map((v) => ({
+    ...v,
+    audio_url: getAudioUrl(v.audio_path),
+    thumbnail_url: getThumbnailUrl(v.thumbnail_path),
+  }));
+};
+
+const fetchVoiceById = async (id: string): Promise<Voice | null> => {
+  const { data, error } = await supabase.from("voices").select("*").eq("id", id).eq("is_deleted", false).single();
+
+  if (error) throw error;
+  if (!data) return null;
+
+  // 音声とサムネイルデータをマッピングして返す
+  return {
+    ...data,
+    audio_url: getAudioUrl(data.audio_path),
+    thumbnail_url: getThumbnailUrl(data.thumbnail_path),
+  };
 };
 
 export const useVoices = (userId: string) => {
   return useQuery({
     queryKey: ["voices", userId],
     queryFn: () => fetchVoices(userId),
+    enabled: !!userId,
   });
 };
 
-// ステップ7でSupabaseのクエリに切り替える
 export const useVoiceById = (id: string) => {
   return useQuery({
     queryKey: ["voice", id],
-    queryFn: async () => {
-      const all = [...MOCK_SATOSHI_VOICES, ...MOCK_MINA_VOICES];
-      return all.find((v) => v.id === id) ?? null;
-    },
+    queryFn: () => fetchVoiceById(id),
+    enabled: !!id,
   });
 };
+
+export { getAudioUrl, getThumbnailUrl };

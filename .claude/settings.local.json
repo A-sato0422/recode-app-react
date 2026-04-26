@@ -1,8 +1,37 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm install *)",
-      "Bash(npm run *)"
+      "Read(**)",
+      "Write(src/**)",
+      "Write(docs/**)",
+      "Write(.tmp/**)",
+      "Bash(git init:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(npm install:*)",
+      "Bash(pnpm install:*)",
+      "Bash(ls:*)",
+      "Bash(cat **)",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__get-library-docs"
+    ],
+    "deny": [
+      "Bash(sudo:*)",
+      "Bash(rm:*)",
+      "Bash(git push:*)",
+      "Bash(git reset:*)",
+      "Bash(git reset:*)",
+      "Bash(git rebase:*)",
+      "Read(.env*)",
+      "Read(**/.env*)",
+      "Read(id_rsa)",
+      "Read(id_ed25519)",
+      "Write(.env*)",
+      "Bash(curl:*)",
+      "Bash(wget:*)"
     ]
   },
   "outputStyle": "Learning"
