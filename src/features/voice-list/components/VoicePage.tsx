@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { useVoices } from "../hooks/useVoices";
 import { VoiceGrid } from "./VoiceGrid";
+import { RecorderModal } from "../../voice-recorder/components/RecorderModal";
 
 type Props = {
   title: string;
@@ -9,7 +11,8 @@ type Props = {
 };
 
 export const VoicePage = ({ title, userId, bgColor, canRecord }: Props) => {
-  const { data: voices, isLoading, isError, refetch } = useVoices(userId); // {data: 任意の名前}で別の偏す名を命名可能
+  const { data: voices, isLoading, isError, refetch } = useVoices(userId);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <div className={`min-h-svh flex flex-col ${bgColor}`}>
@@ -23,12 +26,14 @@ export const VoicePage = ({ title, userId, bgColor, canRecord }: Props) => {
           </button>
           {/* 編集ボタン（ステップ10で実装） */}
           <button className="text-green-600 text-sm">編集</button>
-          {/* 録音ボタン：自分のページのみ表示（ステップ8で実装） */}
+          {/* 録音ボタン：自分のページのみ表示 */}
           {canRecord && (
-            <button className="bg-green-400 text-white text-sm px-3 py-1 rounded-full">+ 録音</button>
+            <button onClick={() => setIsModalOpen(true)} className="bg-green-400 text-white text-sm px-3 py-1 rounded-full">+ 録音</button>
           )}
         </div>
       </div>
+
+      {isModalOpen && <RecorderModal userId={userId} onClose={() => setIsModalOpen(false)} />}
 
       {/* コンテンツ */}
       <div className="flex-1 pt-2 pb-8">

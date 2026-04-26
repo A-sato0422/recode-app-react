@@ -386,7 +386,7 @@ $$;
 | 7 | Supabase: テーブル・RLS・Storage・ユーザー作成 | 高 |
 | 8 | 録音モーダル: `useRecorder` + `RecorderModal` + Storage アップロード | 高 |
 | 9 | サムネイル機能: `ThumbnailPicker` + `useThumbnailUpload` | 中 |
-| 10 | 削除機能: 編集モードトグル + 論理削除 | 中 |
+| 10 | 削除機能: 論理削除 | 中 |
 | 11 | Vercel デプロイ: 環境変数設定・動作確認 | 中 |
 | 12 | GitHub Actions: keep-alive バッチ | 低 |
 
