@@ -15,8 +15,8 @@
 - [x] ステップ5: 横スクロール2画面（HomePage）
 - [x] ステップ6: 再生画面（PlayerPage + useAudioPlayer）
 - [x] ステップ7: Supabase（テーブル・RLS・Storage・ユーザー作成）
-- [ ] ステップ8: 録音モーダル（useRecorder + RecorderModal + Storageアップロード）
-- [ ] ステップ9: サムネイル機能（ThumbnailPicker + useThumbnailUpload）
+- [x] ステップ8: 録音モーダル（useRecorder + RecorderModal + Storageアップロード）
+- [x] ステップ9: サムネイル機能（ThumbnailPicker + useThumbnailUpload）
 - [ ] ステップ10: 削除機能（論理削除）
 - [ ] ステップ11: Vercel デプロイ
 - [ ] ステップ12: GitHub Actions keep-alive バッチ

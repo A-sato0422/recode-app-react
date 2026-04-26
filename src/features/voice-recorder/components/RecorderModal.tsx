@@ -2,8 +2,9 @@ import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "../../../shared/lib/supabase";
 import { useRecorder } from "../hooks/useRecorder";
+import { useThumbnailUpload } from "../hooks/useThumbnailUpload";
+import { ThumbnailPicker } from "./ThumbnailPicker";
 import { useAuth } from "../../auth/hooks/useAuth";
-import type { Voice } from "../../../shared/types/voice";
 
 type Props = {
   userId: string;
@@ -13,6 +14,7 @@ type Props = {
 export const RecorderModal = ({ userId, onClose }: Props) => {
   const { user } = useAuth();
   const { isRecording, recordingTime, audioBlob, startRecording, stopRecording, resetRecording } = useRecorder();
+  const { thumbnailFile, thumbnailPreviewUrl, selectThumbnail, clearThumbnail } = useThumbnailUpload();
   const [label, setLabel] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const queryClient = useQueryClient();
@@ -38,10 +40,20 @@ export const RecorderModal = ({ userId, onClose }: Props) => {
         .upload(audioPath, audioBlob);
       if (uploadError) throw uploadError;
 
+      let thumbnailPath = null;
+      if (thumbnailFile) {
+        thumbnailPath = `${user.id}/${crypto.randomUUID()}.jpg`;
+        const { error: thumbError } = await supabase.storage
+          .from("voice-thumbnails")
+          .upload(thumbnailPath, thumbnailFile);
+        if (thumbError) throw thumbError;
+      }
+
       const { error: insertError } = await supabase.from("voices").insert({
         user_id: user.id,
         label: label.trim(),
         audio_path: audioPath,
+        thumbnail_path: thumbnailPath,
         duration: recordingTime,
       });
       if (insertError) throw insertError;
@@ -87,8 +99,23 @@ export const RecorderModal = ({ userId, onClose }: Props) => {
           )}
         </div>
 
-        {/* ラベル入力 */}
-        {audioBlob && <input type="text" value={label} onChange={(e) => setLabel(e.target.value)} placeholder="ラベルを入力（例: おはよう）" className="w-full border rounded-lg px-3 py-2 text-sm" />}
+        {/* ラベル入力・サムネイル */}
+        {audioBlob && (
+          <div className="space-y-2">
+            <input
+              type="text"
+              value={label}
+              onChange={(e) => setLabel(e.target.value)}
+              placeholder="ラベルを入力（例: おはよう）"
+              className="w-full border rounded-lg px-3 py-2 text-sm"
+            />
+            <ThumbnailPicker
+              previewUrl={thumbnailPreviewUrl}
+              onSelect={selectThumbnail}
+              onClear={clearThumbnail}
+            />
+          </div>
+        )}
 
         {/* アクションボタン */}
         <div className="flex gap-2">
