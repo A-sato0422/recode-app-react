@@ -19,7 +19,7 @@ export const VoiceCard = ({ voice, isEditMode, onDelete }: Props) => {
 
   return (
     <div className="flex flex-col items-center gap-1.5 cursor-pointer relative" onClick={handleClick}>
-      <div className="w-full aspect-square rounded-2xl overflow-hidden shadow-md bg-gray-100">
+      <div className="w-full aspect-square rounded-2xl overflow-hidden bg-gray-100 [filter:drop-shadow(4px_8px_2px_rgba(0,0,0,0.2))]">
         <img src={thumbnailUrl} alt={voice.label} className="w-full h-full object-cover" />
       </div>
       <p className="text-xs text-gray-600 text-center w-full truncate">{voice.label}</p>
@@ -27,7 +27,10 @@ export const VoiceCard = ({ voice, isEditMode, onDelete }: Props) => {
       {/* 編集モード時に削除ボタンを表示 */}
       {isEditMode && (
         <button
-          onClick={(e) => { e.stopPropagation(); onDelete(voice.id); }}
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete(voice.id);
+          }}
           className="absolute -top-1 -right-1 w-6 h-6 bg-red-500 text-white rounded-full text-xs font-bold flex items-center justify-center"
         >
           ✕

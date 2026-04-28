@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { Voice } from "../../../shared/types/voice";
 import { useAudioPlayer } from "../hooks/useAudioPlayer";
@@ -25,17 +26,24 @@ type Props = {
 
 export const PlayerScreen = ({ voice }: Props) => {
   const navigate = useNavigate();
+  const [isClosing, setIsClosing] = useState(false);
   const { isPlaying, currentTime, duration, toggle, seek, skipBackward, skipForward } = useAudioPlayer(voice.audio_url ?? "");
 
   const thumbnailUrl = voice.thumbnail_url ?? DEFAULT_THUMBNAIL;
-  // durationはSupabase連携前はvoiceのdurationを使う
   const totalDuration = duration || voice.duration || 0;
 
+  const handleBack = () => {
+    setIsClosing(true);
+    setTimeout(() => navigate(-1), 350);
+  };
+
   return (
-    <div className="min-h-svh flex flex-col bg-gradient-to-b from-gray-100 to-white px-6">
-      {/* 戻るボタン */}
-      <button onClick={() => navigate(-1)} className="mt-4 self-start text-gray-500 text-xl">
-        ←
+    <div className={`min-h-svh flex flex-col bg-gradient-to-b from-gray-100 to-white px-6 ${isClosing ? "animate-slide-down" : "animate-slide-up"}`}>
+      {/* 戻るボタン（∨ = 下に閉じる） */}
+      <button onClick={handleBack} className="mt-8 self-center text-gray-400 active:translate-y-2 transition-transform duration-100" aria-label="閉じる">
+        <svg width="36" height="24" viewBox="0 0 36 24" fill="none">
+          <path d="M4 6l14 13L32 6" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
       </button>
 
       {/* サムネイル */}
@@ -52,14 +60,7 @@ export const PlayerScreen = ({ voice }: Props) => {
 
         {/* シークバー */}
         <div className="w-full">
-          <input
-            type="range"
-            min={0}
-            max={totalDuration}
-            value={currentTime}
-            onChange={(e) => seek(Number(e.target.value))}
-            className="w-full accent-gray-800"
-          />
+          <input type="range" min={0} max={totalDuration} value={currentTime} onChange={(e) => seek(Number(e.target.value))} className="w-full accent-gray-800" />
           <div className="flex justify-between text-xs text-gray-400 mt-1">
             <span>{formatTime(currentTime)}</span>
             <span>{formatTime(totalDuration)}</span>
