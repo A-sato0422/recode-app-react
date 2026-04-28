@@ -26,7 +26,7 @@ type Props = {
 
 export const PlayerScreen = ({ voice, onClose }: Props) => {
   const [isClosing, setIsClosing] = useState(false);
-  const { isPlaying, currentTime, duration, toggle, seek, skipBackward, skipForward } = useAudioPlayer(voice.audio_url ?? "");
+  const { isPlaying, currentTime, duration, toggle, seek, skipBackward, skipForward } = useAudioPlayer(voice.audio_url ?? "", voice.duration ?? undefined);
 
   const thumbnailUrl = voice.thumbnail_url ?? DEFAULT_THUMBNAIL;
   // Audioのdurationの方が制度が良いので優先する
@@ -69,7 +69,7 @@ export const PlayerScreen = ({ voice, onClose }: Props) => {
             <div
               className="absolute left-0 top-0 h-full bg-gray-700 rounded-full pointer-events-none"
               style={{
-                width: `${totalDuration ? (currentTime / totalDuration) * 100 : 0}%`,
+                width: `${totalDuration ? Math.min((currentTime / totalDuration) * 100, 100) : 0}%`,
                 transition: "width 0.25s linear",
               }}
             />

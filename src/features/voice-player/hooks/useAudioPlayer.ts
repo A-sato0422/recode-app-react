@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 
-export const useAudioPlayer = (audioUrl: string) => {
+export const useAudioPlayer = (audioUrl: string, expectedDuration?: number) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -12,7 +12,19 @@ export const useAudioPlayer = (audioUrl: string) => {
     const audio = new Audio(audioUrl);
     audioRef.current = audio;
 
-    audio.addEventListener("timeupdate", () => setCurrentTime(audio.currentTime));
+    const handleTimeUpdate = () => {
+      setCurrentTime(audio.currentTime);
+      // audio.duration が Infinity の場合（iOS mp4）、ended が発火しないことがある
+      // expectedDuration を超えたら手動で終了処理を行う
+      if (!isFinite(audio.duration) && expectedDuration && audio.currentTime >= expectedDuration) {
+        audio.pause();
+        audio.currentTime = 0;
+        setIsPlaying(false);
+        setCurrentTime(0);
+      }
+    };
+
+    audio.addEventListener("timeupdate", handleTimeUpdate);
     audio.addEventListener("loadedmetadata", () => setDuration(audio.duration));
     audio.addEventListener("ended", () => {
       setIsPlaying(false);
