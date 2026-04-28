@@ -30,7 +30,7 @@ export const LoginForm = () => {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full max-w-sm">
       <FormField label="メールアドレス" type="email" value={email} onChange={setEmail} placeholder="example@email.com" required />
-      <FormField label="パスワード" type="password" value={password} onChange={setPassword} placeholder="••••••••" required />
+      <FormField label="パスワード" type="password" value={password} onChange={setPassword} placeholder="1234" required />
 
       {errorMsg && <p className="text-red-500 text-sm">{errorMsg}</p>}
 

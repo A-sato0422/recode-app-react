@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "../../../shared/lib/supabase";
 import { useVoices } from "../hooks/useVoices";
+import { useAuth } from "../../auth/hooks/useAuth";
 import { VoiceGrid } from "./VoiceGrid";
 import { RecorderModal } from "../../voice-recorder/components/RecorderModal";
 import type { Voice } from "../../../shared/types/voice";
@@ -26,15 +27,17 @@ type Props = {
   bgColor: string;
   accentColor: "green" | "blue";
   canRecord: boolean;
+  isVisible: boolean; // 登録ボタンの表示切替
   onCardClick: (voice: Voice) => void;
 };
 
-export const VoicePage = ({ title, userId, bgColor, accentColor, canRecord, onCardClick }: Props) => {
+export const VoicePage = ({ title, userId, bgColor, accentColor, canRecord, isVisible, onCardClick }: Props) => {
   const { data: voices, isLoading, isError, refetch } = useVoices(userId);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const queryClient = useQueryClient();
   const colors = ACCENT_COLORS[accentColor];
+  const { signOut } = useAuth();
 
   const handleDelete = async (id: string) => {
     const { error } = await supabase.from("voices").update({ is_deleted: true }).eq("id", id);
@@ -51,6 +54,9 @@ export const VoicePage = ({ title, userId, bgColor, accentColor, canRecord, onCa
         <div className="flex items-center gap-3">
           <button onClick={() => refetch()} className={colors.text} aria-label="リロード">
             ↺
+          </button>
+          <button onClick={signOut} className={`${colors.text} text-sm`} aria-label="ログアウト">
+            ログアウト
           </button>
           {canRecord && (
             <button onClick={() => setIsEditMode(!isEditMode)} className={`${colors.text} text-sm`}>
@@ -69,16 +75,15 @@ export const VoicePage = ({ title, userId, bgColor, accentColor, canRecord, onCa
       </div>
 
       {/* 録音FABボタン — portal で transform の影響を回避し fixed を viewport 基準にする */}
-      {canRecord && !isEditMode && createPortal(
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className={`fixed bottom-8 right-6 w-14 h-14 rounded-full ${colors.recordBtn} text-white text-2xl shadow-lg flex items-center justify-center`}
-          aria-label="録音"
-        >
-          ＋
-        </button>,
-        document.body
-      )}
+      {canRecord &&
+        !isEditMode &&
+        isVisible &&
+        createPortal(
+          <button onClick={() => setIsModalOpen(true)} className={`fixed bottom-8 right-6 w-14 h-14 rounded-full ${colors.recordBtn} text-white text-2xl shadow-lg flex items-center justify-center`} aria-label="録音">
+            ＋
+          </button>,
+          document.body,
+        )}
 
       {isModalOpen && <RecorderModal userId={userId} onClose={() => setIsModalOpen(false)} />}
     </div>

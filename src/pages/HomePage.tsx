@@ -34,12 +34,12 @@ export const HomePage = () => {
       <div className="flex h-full transition-transform duration-300 ease-in-out" style={{ width: "200vw", transform: `translateX(${currentPage === 0 ? "0" : "-100vw"})` }}>
         {/* サトボイスページ */}
         <div className="w-screen h-full overflow-y-auto">
-          <VoicePage title="サトボイス" userId={SATOSHI_USER_ID} bgColor="bg-green-50" accentColor="green" canRecord={isSatoshi} onCardClick={setSelectedVoice} />
+          <VoicePage title="サトボイス" userId={SATOSHI_USER_ID} bgColor="bg-green-50" accentColor="green" canRecord={isSatoshi} isVisible={currentPage === 0} onCardClick={setSelectedVoice} />
         </div>
 
         {/* ミナボイスページ */}
         <div className="w-screen h-full overflow-y-auto">
-          <VoicePage title="ミナボイス" userId={MINA_USER_ID} bgColor="bg-blue-50" accentColor="blue" canRecord={isMina} onCardClick={setSelectedVoice} />
+          <VoicePage title="ミナボイス" userId={MINA_USER_ID} bgColor="bg-blue-50" accentColor="blue" canRecord={isMina} isVisible={currentPage === 1} onCardClick={setSelectedVoice} />
         </div>
       </div>
 
