@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "../../../shared/lib/supabase";
 import { useVoices } from "../hooks/useVoices";
@@ -56,11 +57,6 @@ export const VoicePage = ({ title, userId, bgColor, accentColor, canRecord, onCa
               {isEditMode ? "完了" : "編集"}
             </button>
           )}
-          {canRecord && !isEditMode && (
-            <button onClick={() => setIsModalOpen(true)} className={`${colors.recordBtn} text-white text-sm px-3 py-1 rounded-full`}>
-              + 録音
-            </button>
-          )}
         </div>
       </div>
 
@@ -71,6 +67,18 @@ export const VoicePage = ({ title, userId, bgColor, accentColor, canRecord, onCa
         {voices && voices.length === 0 && <p className="text-center text-gray-400 mt-8">まだ音声がありません</p>}
         {voices && voices.length > 0 && <VoiceGrid voices={voices} isEditMode={isEditMode} onDelete={handleDelete} onCardClick={onCardClick} />}
       </div>
+
+      {/* 録音FABボタン — portal で transform の影響を回避し fixed を viewport 基準にする */}
+      {canRecord && !isEditMode && createPortal(
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className={`fixed bottom-8 right-6 w-14 h-14 rounded-full ${colors.recordBtn} text-white text-2xl shadow-lg flex items-center justify-center`}
+          aria-label="録音"
+        >
+          ＋
+        </button>,
+        document.body
+      )}
 
       {isModalOpen && <RecorderModal userId={userId} onClose={() => setIsModalOpen(false)} />}
     </div>

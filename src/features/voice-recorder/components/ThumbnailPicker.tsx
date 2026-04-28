@@ -16,7 +16,8 @@ export const ThumbnailPicker = ({ previewUrl, onSelect, onClear }: Props) => {
   };
 
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex flex-col items-center gap-2">
+      <p className="text-xs text-gray-400">サムネイル（任意）</p>
       <input
         ref={inputRef}
         type="file"
@@ -26,8 +27,8 @@ export const ThumbnailPicker = ({ previewUrl, onSelect, onClear }: Props) => {
       />
 
       {previewUrl ? (
-        <div className="relative w-16 h-16">
-          <img src={previewUrl} className="w-16 h-16 object-cover rounded-lg" />
+        <div className="relative w-20 h-20">
+          <img src={previewUrl} className="w-20 h-20 object-cover rounded-xl" />
           <button
             onClick={onClear}
             className="absolute -top-1 -right-1 w-5 h-5 bg-gray-500 text-white rounded-full text-xs"
@@ -38,9 +39,9 @@ export const ThumbnailPicker = ({ previewUrl, onSelect, onClear }: Props) => {
       ) : (
         <button
           onClick={() => inputRef.current?.click()}
-          className="w-16 h-16 rounded-lg border-2 border-dashed border-gray-300 text-gray-400 text-xs flex items-center justify-center"
+          className="w-20 h-20 rounded-xl border-2 border-dashed border-gray-300 text-gray-400 text-xs flex items-center justify-center"
         >
-          画像
+          ＋ 追加
         </button>
       )}
     </div>
