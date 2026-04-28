@@ -145,7 +145,7 @@ export const RecorderModal = ({ userId, onClose }: Props) => {
               value={label}
               onChange={(e) => setLabel(e.target.value)}
               placeholder="ラベルを入力（例: おはよう）"
-              className="w-full border rounded-lg px-3 py-2 text-sm"
+              className="w-full border rounded-lg px-3 py-2 text-base"
             />
             <ThumbnailPicker
               previewUrl={thumbnailPreviewUrl}

@@ -29,7 +29,8 @@ export const PlayerScreen = ({ voice, onClose }: Props) => {
   const { isPlaying, currentTime, duration, toggle, seek, skipBackward, skipForward } = useAudioPlayer(voice.audio_url ?? "");
 
   const thumbnailUrl = voice.thumbnail_url ?? DEFAULT_THUMBNAIL;
-  const totalDuration = duration || voice.duration || 0;
+  // Audioのdurationの方が制度が良いので優先する
+  const totalDuration = (duration > 0 && isFinite(duration)) ? duration : (voice.duration ?? 0);
 
   const handleBack = () => {
     setIsClosing(true);

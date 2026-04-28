@@ -17,7 +17,7 @@ export const FormField = ({ label, type, value, onChange, placeholder, required 
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         required={required}
-        className="border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-400"
+        className="border border-gray-300 rounded-lg px-4 py-2 text-base focus:outline-none focus:ring-2 focus:ring-green-400"
       />
     </div>
   );
