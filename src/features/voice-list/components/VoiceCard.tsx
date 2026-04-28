@@ -1,21 +1,16 @@
 import { useNavigate } from "react-router-dom";
 import type { Voice } from "../../../shared/types/voice";
 
-// サンプルデザインに合わせたカード背景色
-const CARD_COLORS = ["#FF8FAB", "#E8445A", "#5B5BD6", "#F5A623", "#87CEEB", "#FF6347", "#9B7EC8", "#5BB974", "#FF69B4"];
-
 const DEFAULT_THUMBNAIL = "/default-thumbnail.svg";
 
 type Props = {
   voice: Voice;
-  index: number;
   isEditMode: boolean;
   onDelete: (id: string) => void;
 };
 
-export const VoiceCard = ({ voice, index, isEditMode, onDelete }: Props) => {
+export const VoiceCard = ({ voice, isEditMode, onDelete }: Props) => {
   const navigate = useNavigate();
-  const bgColor = CARD_COLORS[index % CARD_COLORS.length];
   const thumbnailUrl = voice.thumbnail_url ?? DEFAULT_THUMBNAIL;
 
   const handleClick = () => {
@@ -23,15 +18,9 @@ export const VoiceCard = ({ voice, index, isEditMode, onDelete }: Props) => {
   };
 
   return (
-    <div className="flex flex-col items-center gap-1 cursor-pointer relative" onClick={handleClick}>
-      <div className="w-full aspect-square rounded-2xl overflow-hidden" style={{ backgroundColor: bgColor }}>
-        {voice.thumbnail_url ? (
-          <img src={thumbnailUrl} alt={voice.label} className="w-full h-full object-cover" />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <span className="text-white text-3xl font-bold">{voice.label[0]}</span>
-          </div>
-        )}
+    <div className="flex flex-col items-center gap-1.5 cursor-pointer relative" onClick={handleClick}>
+      <div className="w-full aspect-square rounded-2xl overflow-hidden shadow-md bg-gray-100">
+        <img src={thumbnailUrl} alt={voice.label} className="w-full h-full object-cover" />
       </div>
       <p className="text-xs text-gray-600 text-center w-full truncate">{voice.label}</p>
 

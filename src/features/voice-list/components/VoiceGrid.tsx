@@ -9,9 +9,9 @@ type Props = {
 
 export const VoiceGrid = ({ voices, isEditMode, onDelete }: Props) => {
   return (
-    <div className="grid grid-cols-3 gap-3 px-4">
-      {voices.map((voice, index) => (
-        <VoiceCard key={voice.id} voice={voice} index={index} isEditMode={isEditMode} onDelete={onDelete} />
+    <div className="grid grid-cols-3 gap-5 p-5">
+      {voices.map((voice) => (
+        <VoiceCard key={voice.id} voice={voice} isEditMode={isEditMode} onDelete={onDelete} />
       ))}
     </div>
   );
