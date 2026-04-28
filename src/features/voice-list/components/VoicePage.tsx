@@ -41,6 +41,7 @@ export const VoicePage = ({ title, userId, bgColor, accentColor, canRecord, isVi
   const { signOut } = useAuth();
 
   const handleDelete = async (id: string) => {
+    if (!window.confirm("この音声を削除しますか？")) return;
     const { error } = await supabase.from("voices").update({ is_deleted: true }).eq("id", id);
     if (!error) {
       await queryClient.invalidateQueries({ queryKey: ["voices", userId] });
