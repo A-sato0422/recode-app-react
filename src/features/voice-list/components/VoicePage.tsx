@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import { useQueryClient } from "@tanstack/react-query";
+import { RefreshCw, LogOut, Pencil, Check } from "lucide-react";
 import { supabase } from "../../../shared/lib/supabase";
 import { useVoices } from "../hooks/useVoices";
 import { useAuth } from "../../auth/hooks/useAuth";
@@ -52,17 +53,20 @@ export const VoicePage = ({ title, userId, bgColor, accentColor, canRecord, isVi
       <div className={`flex items-center justify-between px-4 py-4 border-b ${colors.border}`}>
         <h1 className={`text-2xl font-bold ${colors.text}`}>{title}</h1>
         <div className="flex items-center gap-3">
-          <button onClick={() => refetch()} className={colors.text} aria-label="リロード">
-            ↺
-          </button>
-          <button onClick={signOut} className={`${colors.text} text-sm`} aria-label="ログアウト">
-            ログアウト
+          <button onClick={() => refetch()} className={`${colors.text} flex flex-col items-center gap-0.5`} aria-label="更新">
+            <RefreshCw size={18} />
+            <span className="text-[10px]">更新</span>
           </button>
           {canRecord && (
-            <button onClick={() => setIsEditMode(!isEditMode)} className={`${colors.text} text-sm`}>
-              {isEditMode ? "完了" : "編集"}
+            <button onClick={() => setIsEditMode(!isEditMode)} className={`${colors.text} flex flex-col items-center gap-0.5`} aria-label={isEditMode ? "完了" : "編集"}>
+              {isEditMode ? <Check size={18} /> : <Pencil size={18} />}
+              <span className="text-[10px]">{isEditMode ? "完了" : "編集"}</span>
             </button>
           )}
+          <button onClick={signOut} className={`${colors.text} flex flex-col items-center gap-0.5 ml-3`} aria-label="退出">
+            <LogOut size={18} />
+            <span className="text-[10px]">退出</span>
+          </button>
         </div>
       </div>
 
