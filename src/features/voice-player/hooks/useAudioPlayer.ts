@@ -12,19 +12,19 @@ export const useAudioPlayer = (audioUrl: string) => {
     const audio = new Audio(audioUrl);
     audioRef.current = audio;
 
-    // timeupdataイベント：再生中に定期的に発火→シークバーを更新することができる
     audio.addEventListener("timeupdate", () => setCurrentTime(audio.currentTime));
     audio.addEventListener("loadedmetadata", () => setDuration(audio.duration));
-    audio.addEventListener("ended", () => setIsPlaying(false));
+    audio.addEventListener("ended", () => {
+      setIsPlaying(false);
+      setCurrentTime(0);
+    });
 
-    // アンマウント時に再生を止めてメモリを解放
     return () => {
       audio.pause();
       audio.src = "";
     };
   }, [audioUrl]);
 
-  // 再生・一時停止
   const toggle = () => {
     if (!audioRef.current) return;
     if (isPlaying) {
@@ -36,7 +36,6 @@ export const useAudioPlayer = (audioUrl: string) => {
     }
   };
 
-  // seekバーの操作
   const seek = (time: number) => {
     if (!audioRef.current) return;
     audioRef.current.currentTime = time;

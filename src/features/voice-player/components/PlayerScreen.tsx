@@ -39,9 +39,9 @@ export const PlayerScreen = ({ voice, onClose }: Props) => {
   return (
     <div className={`fixed inset-0 z-50 flex flex-col bg-gradient-to-b from-gray-100 to-white px-6 ${isClosing ? "animate-slide-down" : "animate-slide-up"}`}>
       {/* 戻るボタン（∨ = 下に閉じる） */}
-      <button onClick={handleBack} className="mt-8 self-center text-gray-400 active:translate-y-2 transition-transform duration-100" aria-label="閉じる">
-        <svg width="36" height="24" viewBox="0 0 36 24" fill="none">
-          <path d="M4 6l14 13L32 6" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+      <button onClick={handleBack} className="mt-8 self-start text-gray-400 active:translate-y-1 transition-transform duration-100" aria-label="閉じる">
+        <svg width="24" height="16" viewBox="0 0 24 16" fill="none">
+          <path d="M2 2l10 12L22 2" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </button>
 
@@ -59,8 +59,25 @@ export const PlayerScreen = ({ voice, onClose }: Props) => {
 
         {/* シークバー */}
         <div className="w-full">
-          <input type="range" min={0} max={totalDuration} value={currentTime} onChange={(e) => seek(Number(e.target.value))} className="w-full accent-gray-800" />
-          <div className="flex justify-between text-xs text-gray-400 mt-1">
+          <div className="relative w-full h-1.5 bg-gray-300 rounded-full">
+            <div
+              className="absolute left-0 top-0 h-full bg-gray-700 rounded-full pointer-events-none"
+              style={{
+                width: `${totalDuration ? (currentTime / totalDuration) * 100 : 0}%`,
+                transition: 'width 0.25s linear',
+              }}
+            />
+            <input
+              type="range"
+              min={0}
+              max={totalDuration}
+              value={currentTime}
+              step={0.1}
+              onChange={(e) => seek(Number(e.target.value))}
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+            />
+          </div>
+          <div className="flex justify-between text-xs text-gray-400 mt-2">
             <span>{formatTime(currentTime)}</span>
             <span>{formatTime(totalDuration)}</span>
           </div>
