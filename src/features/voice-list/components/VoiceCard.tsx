@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import type { Voice } from "../../../shared/types/voice";
 
 const DEFAULT_THUMBNAIL = "/default-thumbnail.svg";
@@ -7,14 +6,14 @@ type Props = {
   voice: Voice;
   isEditMode: boolean;
   onDelete: (id: string) => void;
+  onCardClick: (voice: Voice) => void;
 };
 
-export const VoiceCard = ({ voice, isEditMode, onDelete }: Props) => {
-  const navigate = useNavigate();
+export const VoiceCard = ({ voice, isEditMode, onDelete, onCardClick }: Props) => {
   const thumbnailUrl = voice.thumbnail_url ?? DEFAULT_THUMBNAIL;
 
   const handleClick = () => {
-    if (!isEditMode) navigate(`/player/${voice.id}`);
+    if (!isEditMode) onCardClick(voice);
   };
 
   return (

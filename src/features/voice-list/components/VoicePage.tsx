@@ -4,6 +4,7 @@ import { supabase } from "../../../shared/lib/supabase";
 import { useVoices } from "../hooks/useVoices";
 import { VoiceGrid } from "./VoiceGrid";
 import { RecorderModal } from "../../voice-recorder/components/RecorderModal";
+import type { Voice } from "../../../shared/types/voice";
 
 const ACCENT_COLORS = {
   green: {
@@ -24,9 +25,10 @@ type Props = {
   bgColor: string;
   accentColor: "green" | "blue";
   canRecord: boolean;
+  onCardClick: (voice: Voice) => void;
 };
 
-export const VoicePage = ({ title, userId, bgColor, accentColor, canRecord }: Props) => {
+export const VoicePage = ({ title, userId, bgColor, accentColor, canRecord, onCardClick }: Props) => {
   const { data: voices, isLoading, isError, refetch } = useVoices(userId);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -67,7 +69,7 @@ export const VoicePage = ({ title, userId, bgColor, accentColor, canRecord }: Pr
         {isLoading && <p className="text-center text-gray-400 mt-8">読み込み中...</p>}
         {isError && <p className="text-center text-red-400 mt-8">読み込みに失敗しました</p>}
         {voices && voices.length === 0 && <p className="text-center text-gray-400 mt-8">まだ音声がありません</p>}
-        {voices && voices.length > 0 && <VoiceGrid voices={voices} isEditMode={isEditMode} onDelete={handleDelete} />}
+        {voices && voices.length > 0 && <VoiceGrid voices={voices} isEditMode={isEditMode} onDelete={handleDelete} onCardClick={onCardClick} />}
       </div>
 
       {isModalOpen && <RecorderModal userId={userId} onClose={() => setIsModalOpen(false)} />}

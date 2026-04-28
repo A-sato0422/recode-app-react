@@ -5,13 +5,14 @@ type Props = {
   voices: Voice[];
   isEditMode: boolean;
   onDelete: (id: string) => void;
+  onCardClick: (voice: Voice) => void;
 };
 
-export const VoiceGrid = ({ voices, isEditMode, onDelete }: Props) => {
+export const VoiceGrid = ({ voices, isEditMode, onDelete, onCardClick }: Props) => {
   return (
     <div className="grid grid-cols-3 gap-5 p-5">
       {voices.map((voice) => (
-        <VoiceCard key={voice.id} voice={voice} isEditMode={isEditMode} onDelete={onDelete} />
+        <VoiceCard key={voice.id} voice={voice} isEditMode={isEditMode} onDelete={onDelete} onCardClick={onCardClick} />
       ))}
     </div>
   );

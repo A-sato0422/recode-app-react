@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import type { Voice } from "../../../shared/types/voice";
 import { useAudioPlayer } from "../hooks/useAudioPlayer";
 import { AudioControls } from "./AudioControls";
@@ -22,10 +21,10 @@ const formatDate = (isoString: string) => {
 
 type Props = {
   voice: Voice;
+  onClose: () => void;
 };
 
-export const PlayerScreen = ({ voice }: Props) => {
-  const navigate = useNavigate();
+export const PlayerScreen = ({ voice, onClose }: Props) => {
   const [isClosing, setIsClosing] = useState(false);
   const { isPlaying, currentTime, duration, toggle, seek, skipBackward, skipForward } = useAudioPlayer(voice.audio_url ?? "");
 
@@ -34,11 +33,11 @@ export const PlayerScreen = ({ voice }: Props) => {
 
   const handleBack = () => {
     setIsClosing(true);
-    setTimeout(() => navigate(-1), 350);
+    setTimeout(() => onClose(), 200);
   };
 
   return (
-    <div className={`min-h-svh flex flex-col bg-gradient-to-b from-gray-100 to-white px-6 ${isClosing ? "animate-slide-down" : "animate-slide-up"}`}>
+    <div className={`fixed inset-0 z-50 flex flex-col bg-gradient-to-b from-gray-100 to-white px-6 ${isClosing ? "animate-slide-down" : "animate-slide-up"}`}>
       {/* 戻るボタン（∨ = 下に閉じる） */}
       <button onClick={handleBack} className="mt-8 self-center text-gray-400 active:translate-y-2 transition-transform duration-100" aria-label="閉じる">
         <svg width="36" height="24" viewBox="0 0 36 24" fill="none">
