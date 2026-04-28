@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "../../../shared/lib/supabase";
 import { useRecorder } from "../hooks/useRecorder";
@@ -17,7 +18,39 @@ export const RecorderModal = ({ userId, onClose }: Props) => {
   const { thumbnailFile, thumbnailPreviewUrl, selectThumbnail, clearThumbnail } = useThumbnailUpload();
   const [label, setLabel] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const [isPreviewPlaying, setIsPreviewPlaying] = useState(false);
+  const previewAudioRef = useRef<HTMLAudioElement | null>(null);
   const queryClient = useQueryClient();
+
+  // audioBlobが変わったら（撮り直し時など）プレビューをリセット
+  useEffect(() => {
+    previewAudioRef.current?.pause();
+    previewAudioRef.current = null;
+    setIsPreviewPlaying(false);
+  }, [audioBlob]);
+
+  const togglePreview = () => {
+    if (!audioBlob) return;
+    if (!previewAudioRef.current) {
+      const url = URL.createObjectURL(audioBlob);
+      const audio = new Audio(url);
+      audio.addEventListener("ended", () => {
+        setIsPreviewPlaying(false);
+
+        // 一時URLのメモリのみ開放（音声を削除するわけではない）
+        URL.revokeObjectURL(url);
+        previewAudioRef.current = null;
+      });
+      previewAudioRef.current = audio;
+    }
+    if (isPreviewPlaying) {
+      previewAudioRef.current.pause();
+      setIsPreviewPlaying(false);
+    } else {
+      previewAudioRef.current.play();
+      setIsPreviewPlaying(true);
+    }
+  };
 
   const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60)
@@ -72,9 +105,9 @@ export const RecorderModal = ({ userId, onClose }: Props) => {
     onClose();
   };
 
-  return (
-    <div className="fixed inset-0 bg-black/50 flex items-end justify-center z-50">
-      <div className="bg-white rounded-t-2xl w-full max-w-md p-6 space-y-4">
+  return createPortal(
+    <div className="fixed inset-0 bg-black/50 flex items-end justify-center z-50" onClick={handleClose}>
+      <div className="bg-white rounded-t-2xl w-full max-w-md p-6 space-y-4" onClick={(e) => e.stopPropagation()}>
         <h2 className="text-lg font-bold text-center">録音</h2>
 
         {/* タイマー */}
@@ -93,9 +126,14 @@ export const RecorderModal = ({ userId, onClose }: Props) => {
             </button>
           )}
           {audioBlob && !isRecording && (
-            <button onClick={resetRecording} className="w-16 h-16 rounded-full bg-gray-200 text-gray-600 text-sm font-bold">
-              撮り直し
-            </button>
+            <div className="flex items-center gap-4">
+              <button onClick={togglePreview} className="w-16 h-16 rounded-full bg-blue-100 text-blue-600 text-sm font-bold">
+                {isPreviewPlaying ? "停止" : "再生"}
+              </button>
+              <button onClick={resetRecording} className="w-16 h-16 rounded-full bg-gray-200 text-gray-600 text-sm font-bold">
+                撮り直し
+              </button>
+            </div>
           )}
         </div>
 
@@ -129,6 +167,7 @@ export const RecorderModal = ({ userId, onClose }: Props) => {
           )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
