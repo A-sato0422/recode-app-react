@@ -5,18 +5,33 @@ import { useVoices } from "../hooks/useVoices";
 import { VoiceGrid } from "./VoiceGrid";
 import { RecorderModal } from "../../voice-recorder/components/RecorderModal";
 
+const ACCENT_COLORS = {
+  green: {
+    text: "text-green-600",
+    recordBtn: "bg-green-400",
+    border: "border-green-200",
+  },
+  blue: {
+    text: "text-blue-500",
+    recordBtn: "bg-blue-400",
+    border: "border-blue-200",
+  },
+};
+
 type Props = {
   title: string;
   userId: string;
   bgColor: string;
+  accentColor: "green" | "blue";
   canRecord: boolean;
 };
 
-export const VoicePage = ({ title, userId, bgColor, canRecord }: Props) => {
+export const VoicePage = ({ title, userId, bgColor, accentColor, canRecord }: Props) => {
   const { data: voices, isLoading, isError, refetch } = useVoices(userId);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const queryClient = useQueryClient();
+  const colors = ACCENT_COLORS[accentColor];
 
   const handleDelete = async (id: string) => {
     const { error } = await supabase.from("voices").update({ is_deleted: true }).eq("id", id);
@@ -28,19 +43,19 @@ export const VoicePage = ({ title, userId, bgColor, canRecord }: Props) => {
   return (
     <div className={`min-h-svh flex flex-col ${bgColor}`}>
       {/* ヘッダー */}
-      <div className="flex items-center justify-between px-4 py-4">
-        <h1 className="text-xl font-bold text-green-600">{title}</h1>
+      <div className={`flex items-center justify-between px-4 py-4 border-b ${colors.border}`}>
+        <h1 className={`text-2xl font-bold ${colors.text}`}>{title}</h1>
         <div className="flex items-center gap-3">
-          <button onClick={() => refetch()} className="text-green-600" aria-label="リロード">
+          <button onClick={() => refetch()} className={colors.text} aria-label="リロード">
             ↺
           </button>
           {canRecord && (
-            <button onClick={() => setIsEditMode(!isEditMode)} className="text-green-600 text-sm">
+            <button onClick={() => setIsEditMode(!isEditMode)} className={`${colors.text} text-sm`}>
               {isEditMode ? "完了" : "編集"}
             </button>
           )}
           {canRecord && !isEditMode && (
-            <button onClick={() => setIsModalOpen(true)} className="bg-green-400 text-white text-sm px-3 py-1 rounded-full">
+            <button onClick={() => setIsModalOpen(true)} className={`${colors.recordBtn} text-white text-sm px-3 py-1 rounded-full`}>
               + 録音
             </button>
           )}
