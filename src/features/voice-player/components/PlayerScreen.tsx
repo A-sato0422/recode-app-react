@@ -53,7 +53,7 @@ export const PlayerScreen = ({ voice, onClose }: Props) => {
 
       {/* サムネイル */}
       <div className="flex-1 flex flex-col items-center justify-center gap-6">
-        <div className="w-64 h-64 rounded-3xl overflow-hidden shadow-xl">
+        <div className="w-80 h-80 rounded-3xl overflow-hidden shadow-xl">
           <img src={thumbnailUrl} alt={voice.label} className="w-full h-full object-cover" />
         </div>
 
