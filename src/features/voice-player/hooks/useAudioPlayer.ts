@@ -55,7 +55,11 @@ export const useAudioPlayer = (audioUrl: string, expectedDuration?: number) => {
   };
 
   const skipBackward = () => seek(Math.max(currentTime - 5, 0));
-  const skipForward = () => seek(Math.min(currentTime + 5, duration));
+  const skipForward = () => {
+    // iOSのmp4はaudio.durationがNaNになるためexpectedDurationでフォールバック
+    const cap = isFinite(duration) && duration > 0 ? duration : (expectedDuration ?? Infinity);
+    seek(Math.min(currentTime + 5, cap));
+  };
 
   return { isPlaying, currentTime, duration, toggle, seek, skipBackward, skipForward };
 };
