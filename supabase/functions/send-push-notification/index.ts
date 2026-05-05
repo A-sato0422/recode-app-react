@@ -1,6 +1,11 @@
 import webpush from "npm:web-push";
 import { createClient } from "npm:@supabase/supabase-js";
 
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+};
+
 const VAPID_PUBLIC_KEY = Deno.env.get("VAPID_PUBLIC_KEY")!;
 const VAPID_PRIVATE_KEY = Deno.env.get("VAPID_PRIVATE_KEY")!;
 const VAPID_SUBJECT = Deno.env.get("VAPID_SUBJECT")!;
@@ -8,6 +13,10 @@ const VAPID_SUBJECT = Deno.env.get("VAPID_SUBJECT")!;
 webpush.setVapidDetails(VAPID_SUBJECT, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY);
 
 Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response(null, { headers: corsHeaders, status: 204 });
+  }
+
   const payload = await req.json();
   const record = payload.record as { user_id: string; label: string };
 
@@ -22,7 +31,7 @@ Deno.serve(async (req) => {
     .neq("user_id", record.user_id);
 
   if (!subscriptions || subscriptions.length === 0) {
-    return new Response("no subscribers", { status: 200 });
+    return new Response("no subscribers", { status: 200, headers: corsHeaders });
   }
 
   const notification = JSON.stringify({
@@ -47,5 +56,5 @@ Deno.serve(async (req) => {
     }
   }
 
-  return new Response("ok", { status: 200 });
+  return new Response("ok", { status: 200, headers: corsHeaders });
 });
