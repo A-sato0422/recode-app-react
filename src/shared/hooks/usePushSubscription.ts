@@ -14,7 +14,11 @@ const urlBase64ToUint8Array = (base64String: string): Uint8Array => {
 const saveSubscription = async (userId: string, subscription: PushSubscription) => {
   const p256dh = btoa(String.fromCharCode(...new Uint8Array(subscription.getKey("p256dh")!)));
   const auth = btoa(String.fromCharCode(...new Uint8Array(subscription.getKey("auth")!)));
-  await supabase.from("push_subscriptions").upsert({ user_id: userId, endpoint: subscription.endpoint, keys: { p256dh, auth } }, { onConflict: "user_id" });
+  const { error } = await supabase.from("push_subscriptions").upsert(
+    { user_id: userId, endpoint: subscription.endpoint, keys: { p256dh, auth } },
+    { onConflict: "user_id" }
+  );
+  if (error) throw error;
 };
 
 export const usePushSubscription = () => {
