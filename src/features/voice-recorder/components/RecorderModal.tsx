@@ -88,16 +88,11 @@ export const RecorderModal = ({ userId, onClose }: Props) => {
       if (insertError) throw insertError;
 
       // 保存後、通知機能(edge function)を実行
-      supabase.auth.getSession().then(({ data: { session } }) => {
-        fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-push-notification`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${session?.access_token}`,
-          },
-          body: JSON.stringify({ record: { user_id: user.id, label: label.trim() } }),
-        });
-      }).catch(() => {});
+      supabase.functions
+        .invoke("send-push-notification", {
+          body: { record: { user_id: user.id, label: label.trim() } },
+        })
+        .catch(() => {});
 
       await queryClient.invalidateQueries({ queryKey: ["voices", userId] });
       handleClose();
