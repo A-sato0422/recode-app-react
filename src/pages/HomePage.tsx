@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSwipeable } from "react-swipeable";
 import { useAuth } from "../features/auth/hooks/useAuth";
+import { usePushSubscription } from "../shared/hooks/usePushSubscription";
 import { VoicePage } from "../features/voice-list/components/VoicePage";
 import { PlayerScreen } from "../features/voice-player/components/PlayerScreen";
 import type { Voice } from "../shared/types/voice";
@@ -14,8 +15,13 @@ if (!SATOSHI_USER_ID || !MINA_USER_ID) {
 
 export const HomePage = () => {
   const { user } = useAuth();
+  const { subscribe } = usePushSubscription();
   const [currentPage, setCurrentPage] = useState(0); // 0: サトボイス、1: ミナボイス
   const [selectedVoice, setSelectedVoice] = useState<Voice | null>(null);
+
+  useEffect(() => {
+    if (user) subscribe();
+  }, [user, subscribe]);
 
   const isSatoshi = user?.email === import.meta.env.VITE_SATOSHI_EMAIL;
   const isMina = user?.email === import.meta.env.VITE_MINA_EMAIL;
@@ -50,9 +56,7 @@ export const HomePage = () => {
       </div>
 
       {/* 再生画面オーバーレイ */}
-      {selectedVoice && (
-        <PlayerScreen voice={selectedVoice} onClose={() => setSelectedVoice(null)} />
-      )}
+      {selectedVoice && <PlayerScreen voice={selectedVoice} onClose={() => setSelectedVoice(null)} />}
     </div>
   );
 };

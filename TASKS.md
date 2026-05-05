@@ -18,5 +18,5 @@
 - [x] ステップ8: 録音モーダル（useRecorder + RecorderModal + Storageアップロード）
 - [x] ステップ9: サムネイル機能（ThumbnailPicker + useThumbnailUpload）
 - [x] ステップ10: 削除機能（編集モード、論理削除）
-- [ ] ステップ11: Vercel デプロイ
+- [x] ステップ11: Vercel デプロイ
 - [ ] ステップ12: GitHub Actions keep-alive バッチ
