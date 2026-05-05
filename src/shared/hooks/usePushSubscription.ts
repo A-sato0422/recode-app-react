@@ -24,14 +24,19 @@ export const usePushSubscription = () => {
     if (!user || !("Notification" in window) || !("serviceWorker" in navigator)) return;
     if ((await Notification.requestPermission()) !== "granted") return;
 
-    // swの準備を待つ
-    const reg = await navigator.serviceWorker.ready;
+    try {
+      console.log("[push] VAPID_PUBLIC_KEY:", VAPID_PUBLIC_KEY);
+      const reg = await navigator.serviceWorker.ready;
+      console.log("[push] SW ready");
 
-    // pushサーバーにデバイスを登録
-    const subscription = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY).buffer as ArrayBuffer });
+      const subscription = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY).buffer as ArrayBuffer });
+      console.log("[push] subscribed:", subscription.endpoint);
 
-    // supabaseにデバイスのエンドポイントを保存
-    await saveSubscription(user.id, subscription);
+      await saveSubscription(user.id, subscription);
+      console.log("[push] saved to Supabase");
+    } catch (e) {
+      console.error("[push] subscribe failed:", e);
+    }
   }, [user]);
 
   return { subscribe };
