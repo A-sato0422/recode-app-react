@@ -29,15 +29,16 @@ export const usePushSubscription = () => {
     if ((await Notification.requestPermission()) !== "granted") return;
 
     try {
-      console.log("[push] VAPID_PUBLIC_KEY:", VAPID_PUBLIC_KEY);
       const reg = await navigator.serviceWorker.ready;
-      console.log("[push] SW ready");
+
+      const existing = await reg.pushManager.getSubscription();
+      if (existing) {
+        await saveSubscription(user.id, existing);
+        return;
+      }
 
       const subscription = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY).buffer as ArrayBuffer });
-      console.log("[push] subscribed:", subscription.endpoint);
-
       await saveSubscription(user.id, subscription);
-      console.log("[push] saved to Supabase");
     } catch (e) {
       console.error("[push] subscribe failed:", e);
     }
