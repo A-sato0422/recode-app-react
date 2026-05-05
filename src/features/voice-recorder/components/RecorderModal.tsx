@@ -68,17 +68,13 @@ export const RecorderModal = ({ userId, onClose }: Props) => {
       // フォルダ名：各アカウントのUUID、ファイル名：randomUUID()で生成した文字列
       const audioPath = `${user.id}/${crypto.randomUUID()}.${ext}`;
 
-      const { error: uploadError } = await supabase.storage
-        .from("voice-recordings")
-        .upload(audioPath, audioBlob);
+      const { error: uploadError } = await supabase.storage.from("voice-recordings").upload(audioPath, audioBlob);
       if (uploadError) throw uploadError;
 
       let thumbnailPath = null;
       if (thumbnailFile) {
         thumbnailPath = `${user.id}/${crypto.randomUUID()}.jpg`;
-        const { error: thumbError } = await supabase.storage
-          .from("voice-thumbnails")
-          .upload(thumbnailPath, thumbnailFile);
+        const { error: thumbError } = await supabase.storage.from("voice-thumbnails").upload(thumbnailPath, thumbnailFile);
         if (thumbError) throw thumbError;
       }
 
@@ -90,6 +86,13 @@ export const RecorderModal = ({ userId, onClose }: Props) => {
         duration: recordingTime,
       });
       if (insertError) throw insertError;
+
+      // 保存後、通知機能(edge function)を実行
+      supabase.functions
+        .invoke("send-push-notification", {
+          body: { record: { user_id: user.id, label: label.trim() } },
+        })
+        .catch(() => {}); // 通知失敗時も他処理は正常に終了するように火花散らし
 
       await queryClient.invalidateQueries({ queryKey: ["voices", userId] });
       handleClose();
@@ -140,18 +143,8 @@ export const RecorderModal = ({ userId, onClose }: Props) => {
         {/* ラベル入力・サムネイル */}
         {audioBlob && (
           <div className="space-y-2">
-            <input
-              type="text"
-              value={label}
-              onChange={(e) => setLabel(e.target.value)}
-              placeholder="ラベルを入力（例: おはよう）"
-              className="w-full border rounded-lg px-3 py-2 text-base"
-            />
-            <ThumbnailPicker
-              previewUrl={thumbnailPreviewUrl}
-              onSelect={selectThumbnail}
-              onClear={clearThumbnail}
-            />
+            <input type="text" value={label} onChange={(e) => setLabel(e.target.value)} placeholder="ラベルを入力（例: おはよう）" className="w-full border rounded-lg px-3 py-2 text-base" />
+            <ThumbnailPicker previewUrl={thumbnailPreviewUrl} onSelect={selectThumbnail} onClear={clearThumbnail} />
           </div>
         )}
 
@@ -168,6 +161,6 @@ export const RecorderModal = ({ userId, onClose }: Props) => {
         </div>
       </div>
     </div>,
-    document.body
+    document.body,
   );
 };
