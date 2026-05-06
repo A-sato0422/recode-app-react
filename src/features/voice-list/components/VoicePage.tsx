@@ -7,6 +7,7 @@ import { useVoices } from "../hooks/useVoices";
 import { useAuth } from "../../auth/hooks/useAuth";
 import { VoiceGrid } from "./VoiceGrid";
 import { RecorderModal } from "../../voice-recorder/components/RecorderModal";
+import { useUpdateVoiceOrder } from "../hooks/useUpdateVoiceOrder";
 import type { Voice } from "../../../shared/types/voice";
 
 const ACCENT_COLORS = {
@@ -14,11 +15,13 @@ const ACCENT_COLORS = {
     text: "text-green-600",
     recordBtn: "bg-green-400",
     border: "border-green-200",
+    hintBg: "bg-green-100 border-green-200",
   },
   blue: {
     text: "text-blue-500",
     recordBtn: "bg-blue-400",
     border: "border-blue-200",
+    hintBg: "bg-blue-100 border-blue-200",
   },
 };
 
@@ -30,15 +33,19 @@ type Props = {
   canRecord: boolean;
   isVisible: boolean; // 登録ボタンの表示切替
   onCardClick: (voice: Voice) => void;
+  onEditModeChange?: (isEdit: boolean) => void;
 };
 
-export const VoicePage = ({ title, userId, bgColor, accentColor, canRecord, isVisible, onCardClick }: Props) => {
+export const VoicePage = ({ title, userId, bgColor, accentColor, canRecord, isVisible, onCardClick, onEditModeChange }: Props) => {
   const { data: voices, isLoading, isError, refetch } = useVoices(userId);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const queryClient = useQueryClient();
   const colors = ACCENT_COLORS[accentColor];
   const { signOut } = useAuth();
+
+  const { mutate: updateOrder } = useUpdateVoiceOrder(userId);
+  const handleReorder = (orderedIds: string[]) => updateOrder(orderedIds);
 
   const handleDelete = async (id: string) => {
     if (!window.confirm("この音声を削除しますか？")) return;
@@ -59,7 +66,15 @@ export const VoicePage = ({ title, userId, bgColor, accentColor, canRecord, isVi
             <span className="text-[10px]">更新</span>
           </button>
           {canRecord && (
-            <button onClick={() => setIsEditMode(!isEditMode)} className={`${colors.text} flex flex-col items-center gap-0.5`} aria-label={isEditMode ? "完了" : "編集"}>
+            <button
+              onClick={() => {
+                const next = !isEditMode;
+                setIsEditMode(next);
+                onEditModeChange?.(next);
+              }}
+              className={`${colors.text} flex flex-col items-center gap-0.5`}
+              aria-label={isEditMode ? "完了" : "編集"}
+            >
               {isEditMode ? <Check size={18} /> : <Pencil size={18} />}
               <span className="text-[10px]">{isEditMode ? "完了" : "編集"}</span>
             </button>
@@ -71,12 +86,15 @@ export const VoicePage = ({ title, userId, bgColor, accentColor, canRecord, isVi
         </div>
       </div>
 
+      {/* 編集モードヒント */}
+      {isEditMode && <p className={`text-center text-xs py-2 border-b ${colors.text} ${colors.hintBg}`}>カード長押しで順番の変更が可能</p>}
+
       {/* コンテンツ */}
-      <div className="flex-1 pt-2 pb-8">
+      <div className="flex-1 pt-2 pb-8" onTouchStart={isEditMode ? (e) => e.stopPropagation() : undefined}>
         {isLoading && <p className="text-center text-gray-400 mt-8">読み込み中...</p>}
         {isError && <p className="text-center text-red-400 mt-8">読み込みに失敗しました</p>}
         {voices && voices.length === 0 && <p className="text-center text-gray-400 mt-8">まだ音声がありません</p>}
-        {voices && voices.length > 0 && <VoiceGrid voices={voices} isEditMode={isEditMode} onDelete={handleDelete} onCardClick={onCardClick} />}
+        {voices && voices.length > 0 && <VoiceGrid voices={voices} isEditMode={isEditMode} onDelete={handleDelete} onCardClick={onCardClick} onReorder={handleReorder} />}
       </div>
 
       {/* 録音FABボタン — portal で transform の影響を回避し fixed を viewport 基準にする */}

@@ -3,7 +3,8 @@ import { supabase, getAudioUrl, getThumbnailUrl } from "../../../shared/lib/supa
 import type { Voice } from "../../../shared/types/voice";
 
 const fetchVoices = async (userId: string): Promise<Voice[]> => {
-  const { data, error } = await supabase.from("voices").select("*").eq("user_id", userId).eq("is_deleted", false).order("created_at", { ascending: false });
+  const { data, error } = await supabase.from("voices").select("*").eq("user_id", userId).eq("is_deleted", false).order("sort_order", { ascending: false, nullsFirst: true })
+    .order("created_at", { ascending: false });
 
   if (error) throw error;
   if (!data) return [];
