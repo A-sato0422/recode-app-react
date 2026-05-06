@@ -18,6 +18,7 @@ export const SortableVoiceCard = ({ voice, isEditMode, onDelete, onCardClick }: 
     transition,
     zIndex: isDragging ? 10 : undefined,
     opacity: isDragging ? 0.85 : 1,
+    ...(isEditMode && { WebkitTouchCallout: "none", userSelect: "none" } as React.CSSProperties),
   };
 
   return (
