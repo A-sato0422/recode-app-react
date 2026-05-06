@@ -78,12 +78,23 @@ export const RecorderModal = ({ userId, onClose }: Props) => {
         if (thumbError) throw thumbError;
       }
 
+      const { data: maxOrderData } = await supabase
+        .from("voices")
+        .select("sort_order")
+        .eq("user_id", user.id)
+        .eq("is_deleted", false)
+        .order("sort_order", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      const nextSortOrder = (maxOrderData?.sort_order ?? 0) + 1;
+
       const { error: insertError } = await supabase.from("voices").insert({
         user_id: user.id,
         label: label.trim(),
         audio_path: audioPath,
         thumbnail_path: thumbnailPath,
         duration: recordingTime,
+        sort_order: nextSortOrder,
       });
       if (insertError) throw insertError;
 

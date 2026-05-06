@@ -10,6 +10,7 @@ export type Voice = {
   is_deleted: boolean;
   created_at: string;
   keep_alive_at: string;
+  sort_order: number | null;
 };
 
 export type CreateVoiceInput = {

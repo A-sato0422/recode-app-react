@@ -23,7 +23,6 @@ export const VoiceCard = ({ voice, isEditMode, onDelete, onCardClick }: Props) =
       </div>
       <p className="text-xs text-gray-600 text-center w-full truncate">{voice.label}</p>
 
-      {/* 編集モード時に削除ボタンを表示 */}
       {isEditMode && (
         <button
           onClick={(e) => {

@@ -18,6 +18,7 @@ export const HomePage = () => {
   const { subscribe } = usePushSubscription();
   const [currentPage, setCurrentPage] = useState(0); // 0: サトボイス、1: ミナボイス
   const [selectedVoice, setSelectedVoice] = useState<Voice | null>(null);
+  const [isAnyEditMode, setIsAnyEditMode] = useState(false);
 
   useEffect(() => {
     if (user) subscribe();
@@ -27,8 +28,8 @@ export const HomePage = () => {
   const isMina = user?.email === import.meta.env.VITE_MINA_EMAIL;
 
   const handlers = useSwipeable({
-    onSwipedLeft: () => setCurrentPage(1), // 左スワイプ → ミナボイスへ
-    onSwipedRight: () => setCurrentPage(0), // 右スワイプ → サトボイスへ
+    onSwipedLeft: () => !isAnyEditMode && setCurrentPage(1),
+    onSwipedRight: () => !isAnyEditMode && setCurrentPage(0),
     preventScrollOnSwipe: true,
     trackMouse: true, // 開発中にPCでも確認できる
   });
@@ -40,12 +41,12 @@ export const HomePage = () => {
       <div className="flex h-full transition-transform duration-300 ease-in-out" style={{ width: "200vw", transform: `translateX(${currentPage === 0 ? "0" : "-100vw"})` }}>
         {/* サトボイスページ */}
         <div className="w-screen h-full overflow-y-auto">
-          <VoicePage title="サトボイス" userId={SATOSHI_USER_ID} bgColor="bg-green-50" accentColor="green" canRecord={isSatoshi} isVisible={currentPage === 0} onCardClick={setSelectedVoice} />
+          <VoicePage title="サトボイス" userId={SATOSHI_USER_ID} bgColor="bg-green-50" accentColor="green" canRecord={isSatoshi} isVisible={currentPage === 0} onCardClick={setSelectedVoice} onEditModeChange={setIsAnyEditMode} />
         </div>
 
         {/* ミナボイスページ */}
         <div className="w-screen h-full overflow-y-auto">
-          <VoicePage title="ミナボイス" userId={MINA_USER_ID} bgColor="bg-blue-50" accentColor="blue" canRecord={isMina} isVisible={currentPage === 1} onCardClick={setSelectedVoice} />
+          <VoicePage title="ミナボイス" userId={MINA_USER_ID} bgColor="bg-blue-50" accentColor="blue" canRecord={isMina} isVisible={currentPage === 1} onCardClick={setSelectedVoice} onEditModeChange={setIsAnyEditMode} />
         </div>
       </div>
 

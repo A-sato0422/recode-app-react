@@ -17,7 +17,11 @@
       "Bash(cat **)",
       "mcp__context7__resolve-library-id",
       "mcp__context7__get-library-docs",
-      "Bash(npm uninstall *)"
+      "Bash(npm uninstall *)",
+      "Bash(git *)",
+      "Bash(xargs grep -l \"order\\\\|sort\")",
+      "Bash(Get-Content *)",
+      "Bash(npx tsc *)"
     ],
     "deny": [
       "Bash(sudo:*)",
@@ -34,6 +38,5 @@
       "Bash(curl:*)",
       "Bash(wget:*)"
     ]
-  },
-  "outputStyle": "Learning"
+  }
 }
