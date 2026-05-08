@@ -44,6 +44,13 @@ export const VoicePage = ({ title, userId, bgColor, accentColor, canRecord, isVi
   const colors = ACCENT_COLORS[accentColor];
   const { signOut } = useAuth();
 
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    await refetch();
+    setTimeout(() => setIsRefreshing(false), 600);
+  };
+
   const { mutate: updateOrder } = useUpdateVoiceOrder(userId);
   const handleReorder = (orderedIds: string[]) => updateOrder(orderedIds);
 
@@ -61,8 +68,8 @@ export const VoicePage = ({ title, userId, bgColor, accentColor, canRecord, isVi
       <div className={`flex items-center justify-between px-4 py-4 border-b ${colors.border}`}>
         <h1 className={`text-2xl font-bold ${colors.text}`}>{title}</h1>
         <div className="flex items-center gap-3">
-          <button onClick={() => refetch()} className={`${colors.text} flex flex-col items-center gap-0.5`} aria-label="更新">
-            <RefreshCw size={18} />
+          <button onClick={handleRefresh} className={`${colors.text} flex flex-col items-center gap-0.5`} aria-label="更新">
+            <RefreshCw size={18} className={isRefreshing ? "animate-spin" : ""} />
             <span className="text-[10px]">更新</span>
           </button>
           {canRecord && (
@@ -109,6 +116,14 @@ export const VoicePage = ({ title, userId, bgColor, accentColor, canRecord, isVi
         )}
 
       {isModalOpen && <RecorderModal userId={userId} onClose={() => setIsModalOpen(false)} />}
+
+      {isRefreshing &&
+        createPortal(
+          <div className="fixed inset-0 flex items-center justify-center pointer-events-none z-50">
+            <div className="bg-black/60 text-white text-sm px-5 py-2.5 rounded-full">更新中...</div>
+          </div>,
+          document.body,
+        )}
     </div>
   );
 };
