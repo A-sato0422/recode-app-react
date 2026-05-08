@@ -86,7 +86,7 @@ export const VoicePage = ({ title, userId, bgColor, accentColor, canRecord, isVi
               <span className="text-[10px]">{isEditMode ? "完了" : "編集"}</span>
             </button>
           )}
-          <button onClick={signOut} className={`${colors.text} flex flex-col items-center gap-0.5 ml-3`} aria-label="退出">
+          <button onClick={() => { if (window.confirm("ログアウトしますか？")) signOut(); }} className={`${colors.text} flex flex-col items-center gap-0.5 ml-3`} aria-label="退出">
             <LogOut size={18} />
             <span className="text-[10px]">退出</span>
           </button>
