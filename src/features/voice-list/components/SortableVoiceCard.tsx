@@ -7,10 +7,11 @@ type Props = {
   voice: Voice;
   isEditMode: boolean;
   onDelete: (id: string) => void;
+  onEdit: (voice: Voice) => void;
   onCardClick: (voice: Voice) => void;
 };
 
-export const SortableVoiceCard = ({ voice, isEditMode, onDelete, onCardClick }: Props) => {
+export const SortableVoiceCard = ({ voice, isEditMode, onDelete, onEdit, onCardClick }: Props) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: voice.id });
 
   const style = {
@@ -28,7 +29,7 @@ export const SortableVoiceCard = ({ voice, isEditMode, onDelete, onCardClick }: 
       {...(isEditMode ? { ...attributes, ...listeners } : {})}
       className={isEditMode ? "touch-none" : undefined}
     >
-      <VoiceCard voice={voice} isEditMode={isEditMode} onDelete={onDelete} onCardClick={onCardClick} />
+      <VoiceCard voice={voice} isEditMode={isEditMode} onDelete={onDelete} onEdit={onEdit} onCardClick={onCardClick} />
     </div>
   );
 };

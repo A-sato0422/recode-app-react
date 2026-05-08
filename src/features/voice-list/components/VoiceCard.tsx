@@ -1,3 +1,4 @@
+import { Pencil } from "lucide-react";
 import type { Voice } from "../../../shared/types/voice";
 
 const DEFAULT_THUMBNAIL = "/default-thumbnail.svg";
@@ -6,10 +7,11 @@ type Props = {
   voice: Voice;
   isEditMode: boolean;
   onDelete: (id: string) => void;
+  onEdit: (voice: Voice) => void;
   onCardClick: (voice: Voice) => void;
 };
 
-export const VoiceCard = ({ voice, isEditMode, onDelete, onCardClick }: Props) => {
+export const VoiceCard = ({ voice, isEditMode, onDelete, onEdit, onCardClick }: Props) => {
   const thumbnailUrl = voice.thumbnail_url ?? DEFAULT_THUMBNAIL;
 
   const handleClick = () => {
@@ -24,15 +26,26 @@ export const VoiceCard = ({ voice, isEditMode, onDelete, onCardClick }: Props) =
       <p className="text-xs text-gray-600 text-center w-full truncate">{voice.label}</p>
 
       {isEditMode && (
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onDelete(voice.id);
-          }}
-          className="absolute -top-1 -right-1 w-6 h-6 bg-red-500 text-white rounded-full text-xs font-bold flex items-center justify-center"
-        >
-          ✕
-        </button>
+        <>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete(voice.id);
+            }}
+            className="absolute -top-1 -right-1 w-6 h-6 bg-red-500 text-white rounded-full text-xs font-bold flex items-center justify-center"
+          >
+            ✕
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onEdit(voice);
+            }}
+            className="absolute -top-1 -left-1 w-6 h-6 bg-gray-500 text-white rounded-full flex items-center justify-center"
+          >
+            <Pencil size={12} />
+          </button>
+        </>
       )}
     </div>
   );

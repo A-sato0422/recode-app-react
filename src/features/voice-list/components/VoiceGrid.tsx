@@ -9,11 +9,12 @@ type Props = {
   voices: Voice[];
   isEditMode: boolean;
   onDelete: (id: string) => void;
+  onEdit: (voice: Voice) => void;
   onCardClick: (voice: Voice) => void;
   onReorder: (orderedIds: string[]) => void;
 };
 
-export const VoiceGrid = ({ voices, isEditMode, onDelete, onCardClick, onReorder }: Props) => {
+export const VoiceGrid = ({ voices, isEditMode, onDelete, onEdit, onCardClick, onReorder }: Props) => {
   const [items, setItems] = useState<Voice[]>(voices);
 
   useEffect(() => {
@@ -40,7 +41,7 @@ export const VoiceGrid = ({ voices, isEditMode, onDelete, onCardClick, onReorder
     return (
       <div className="grid grid-cols-3 gap-5 p-5">
         {items.map((voice) => (
-          <SortableVoiceCard key={voice.id} voice={voice} isEditMode={false} onDelete={onDelete} onCardClick={onCardClick} />
+          <SortableVoiceCard key={voice.id} voice={voice} isEditMode={false} onDelete={onDelete} onEdit={onEdit} onCardClick={onCardClick} />
         ))}
       </div>
     );
@@ -51,7 +52,7 @@ export const VoiceGrid = ({ voices, isEditMode, onDelete, onCardClick, onReorder
       <SortableContext items={items.map((v) => v.id)} strategy={rectSortingStrategy}>
         <div className="grid grid-cols-3 gap-5 p-5">
           {items.map((voice) => (
-            <SortableVoiceCard key={voice.id} voice={voice} isEditMode={true} onDelete={onDelete} onCardClick={onCardClick} />
+            <SortableVoiceCard key={voice.id} voice={voice} isEditMode={true} onDelete={onDelete} onEdit={onEdit} onCardClick={onCardClick} />
           ))}
         </div>
       </SortableContext>

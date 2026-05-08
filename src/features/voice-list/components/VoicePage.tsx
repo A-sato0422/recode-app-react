@@ -7,6 +7,7 @@ import { useVoices } from "../hooks/useVoices";
 import { useAuth } from "../../auth/hooks/useAuth";
 import { VoiceGrid } from "./VoiceGrid";
 import { RecorderModal } from "../../voice-recorder/components/RecorderModal";
+import { VoiceEditModal } from "./VoiceEditModal";
 import { useUpdateVoiceOrder } from "../hooks/useUpdateVoiceOrder";
 import type { Voice } from "../../../shared/types/voice";
 
@@ -40,6 +41,7 @@ export const VoicePage = ({ title, userId, bgColor, accentColor, canRecord, isVi
   const { data: voices, isLoading, isError, refetch } = useVoices(userId);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [editingVoice, setEditingVoice] = useState<Voice | null>(null);
   const queryClient = useQueryClient();
   const colors = ACCENT_COLORS[accentColor];
   const { signOut } = useAuth();
@@ -101,7 +103,7 @@ export const VoicePage = ({ title, userId, bgColor, accentColor, canRecord, isVi
         {isLoading && <p className="text-center text-gray-400 mt-8">読み込み中...</p>}
         {isError && <p className="text-center text-red-400 mt-8">読み込みに失敗しました</p>}
         {voices && voices.length === 0 && <p className="text-center text-gray-400 mt-8">まだ音声がありません</p>}
-        {voices && voices.length > 0 && <VoiceGrid voices={voices} isEditMode={isEditMode} onDelete={handleDelete} onCardClick={onCardClick} onReorder={handleReorder} />}
+        {voices && voices.length > 0 && <VoiceGrid voices={voices} isEditMode={isEditMode} onDelete={handleDelete} onEdit={setEditingVoice} onCardClick={onCardClick} onReorder={handleReorder} />}
       </div>
 
       {/* 録音FABボタン — portal で transform の影響を回避し fixed を viewport 基準にする */}
@@ -116,6 +118,7 @@ export const VoicePage = ({ title, userId, bgColor, accentColor, canRecord, isVi
         )}
 
       {isModalOpen && <RecorderModal userId={userId} onClose={() => setIsModalOpen(false)} />}
+      {editingVoice && <VoiceEditModal voice={editingVoice} userId={userId} onClose={() => setEditingVoice(null)} />}
 
       {isRefreshing &&
         createPortal(
