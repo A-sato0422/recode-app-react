@@ -19,4 +19,4 @@
 - [x] ステップ9: サムネイル機能（ThumbnailPicker + useThumbnailUpload）
 - [x] ステップ10: 削除機能（編集モード、論理削除）
 - [x] ステップ11: Vercel デプロイ
-- [ ] ステップ12: GitHub Actions keep-alive バッチ
+- [x] ステップ12: GitHub Actions keep-alive バッチ
